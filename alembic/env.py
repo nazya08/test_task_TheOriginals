@@ -7,7 +7,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# from src.adapters.sqlalchemy.models import my_sqlalchemy_models  # noqa # TODO
+from src.adapters.sqlalchemy.models import base, user, board, list, card  # noqa
 from src.adapters.sqlalchemy.db.base_class import Base
 
 # this is the Alembic Config object, which provides
