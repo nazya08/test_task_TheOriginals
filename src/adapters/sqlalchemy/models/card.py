@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime, Table, Boolean
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnum
 
@@ -33,14 +33,15 @@ class Card(Base, TimestampedModel):
     reminder_datetime = Column(DateTime, nullable=True)
 
     list = relationship("List", back_populates="cards")
-    responsible = relationship('User', back_populates='tasks_responsible')
-    performers = relationship('User', secondary=task_performers_association, back_populates="perform_tasks")
-    comments = relationship("CardComment", back_populates="card", cascade="all, delete-orphan")
+    responsible = relationship('User', back_populates='cards_responsible')
+    performers = relationship('User', secondary=task_performers_association, back_populates="perform_cards")
+    comments = relationship("Comment", back_populates="card", cascade="all, delete-orphan")
     attachments = relationship("CardAttachment", back_populates="card", cascade="all, delete-orphan")
+    check_lists = relationship("CheckList", back_populates="card", cascade="all, delete-orphan")
     activities = relationship("CardActivity", back_populates="card", cascade="all, delete-orphan")
 
 
-class CardComment(Base, TimestampedModel):
+class Comment(Base, TimestampedModel):
     id = Column(Integer, primary_key=True, index=True)
     content = Column(String, nullable=False)
     author_id = Column(Integer, ForeignKey('user.id'), nullable=False)
@@ -57,6 +58,16 @@ class CardAttachment(Base, TimestampedModel):
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
     card = relationship("Card", back_populates="attachments")
+
+
+class CheckList(Base, TimestampedModel):
+    id = Column(Integer, primary_key=True, index=True)
+    card_id = Column(Integer, ForeignKey("card.id"))
+    title = Column(String)
+    is_checked = Column(Boolean, default=False)
+    position = Column(Integer, default=0)
+
+    card = relationship("Card", back_populates="check_lists")
 
 
 class ActionType(PyEnum):

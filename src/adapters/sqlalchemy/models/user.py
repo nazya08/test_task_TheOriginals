@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 
 from src.adapters.sqlalchemy.db.base_class import Base
 from src.adapters.sqlalchemy.models.base import TimestampedModel
+from src.adapters.sqlalchemy.models.card import task_performers_association
 
 
 class UserType(PyEnum):
@@ -21,4 +22,7 @@ class User(Base, TimestampedModel):
     is_active = Column(Boolean, default=True)
 
     boards = relationship("Board", back_populates="owner")
-    cards = relationship("Card", back_populates="assignee")
+    cards_responsible = relationship("Card", back_populates="responsible")
+    perform_cards = relationship("Card", secondary=task_performers_association, back_populates="performers")
+    comments = relationship("Comment", back_populates="author")
+    card_activities = relationship("CardActivity", back_populates="performed_by")

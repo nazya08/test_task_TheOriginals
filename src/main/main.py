@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-# from src.presentation.api.routers import api_router
+from src.presentation.api.routers import api_router
 from src.main.config import settings
 
 app = FastAPI(
@@ -22,7 +22,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# app.include_router(api_router, prefix=settings.API_STR)
+app.include_router(api_router, prefix=settings.API_STR)
 
 
 if __name__ == "__main__":
