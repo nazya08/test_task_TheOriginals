@@ -9,6 +9,7 @@ services:
       - .:/app
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:14.1-alpine
@@ -19,6 +20,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5434:5433"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
       image: redis:alpine

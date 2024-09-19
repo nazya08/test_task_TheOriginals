@@ -85,22 +85,22 @@ class CardService:
         if old_status != new_status:
             responsible_user = card.responsible
 
-            # if responsible_user:
-            #     send_status_change_email.delay(
-            #         email_to=responsible_user.email,
-            #         task_title=card.title,
-            #         old_status=old_status,
-            #         new_status=new_status,
-            #         due_date=card.due_date
-            #     )
             if responsible_user:
-                mock_send_status_change_email(
+                send_status_change_email.delay(
                     email_to=responsible_user.email,
                     task_title=card.title,
                     old_status=old_status,
                     new_status=new_status,
-                    due_date=str(card.due_date)
+                    due_date=card.due_date
                 )
+            # if responsible_user:
+            #     mock_send_status_change_email(
+            #         email_to=responsible_user.email,
+            #         task_title=card.title,
+            #         old_status=old_status,
+            #         new_status=new_status,
+            #         due_date=str(card.due_date)
+            #     )
 
         return updated_card
 
