@@ -31,6 +31,10 @@ class UserResponse(UserExtendedData):
         from_attributes = True
 
 
+class UserShortResponse(UserId, UserExtendedData):
+    pass
+
+
 class UserSignUp(UserBaseData):
     email: EmailStr
     password: str

@@ -14,7 +14,6 @@ from src.presentation.dependencies.user import get_current_active_user
 router = APIRouter()
 
 
-# TODO: delete list | read list by id | read all lists
 @router.get("/{board_id}/lists")
 def read_all_lists(
     board: Board = Depends(get_board),

@@ -1,6 +1,6 @@
 from typing import Optional, Union, List, Dict
 
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from fastapi_filter.contrib.sqlalchemy import Filter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -60,6 +60,12 @@ class BoardService:
         if current_user.type == UserType.admin or current_user.id == board.owner_id:
             return True
         return current_user.id in [member.id for member in board_members]
+
+    def is_user_member_of_board_by_id(self, board: Board, user_id: int) -> bool:
+        members = self.board_repo.get_board_members(board_id=board.id)
+        if user_id == board.owner_id:
+            return True
+        return any(member.id == user_id for member in members)
 
     def add_member_to_board(self, board: Board, member_id: int, current_user: User) -> None:
         if board.owner_id != current_user.id and current_user.type != UserType.admin:
