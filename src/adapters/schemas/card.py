@@ -15,7 +15,7 @@ class CardCreate(BaseModel):
 
 
 class CardUpdate(CardCreate):
-    pass
+    list_id: Optional[int] = None
 
 
 class CardResponse(BaseModel):
@@ -37,6 +37,7 @@ class CardResponse(BaseModel):
 class CardExternalResponse(BaseModel):
     card_detail: CardResponse
     performers: List[UserShortResponse]
+    performers_count: int
     comments_count: int
     attachments_count: int
     checklists_count: int

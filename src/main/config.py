@@ -1,9 +1,9 @@
 import os
 import secrets
-from typing import Optional, Any, Dict, List, Union
+from typing import Optional, Any, Dict, List, Union, ClassVar
 
 from dotenv import load_dotenv
-from pydantic import PostgresDsn, field_validator, AnyHttpUrl
+from pydantic import PostgresDsn, field_validator, AnyHttpUrl, EmailStr
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -92,6 +92,20 @@ class Settings(BaseSettings):
         )
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
+    BROKER_URL: str = os.getenv("BROKER_URL")
+
+    EMAILS_ENABLED: bool = True
+
+    EMAILS_FROM_NAME: str = os.getenv("EMAILS_FROM_NAME")
+    EMAILS_FROM_EMAIL: EmailStr = os.getenv("EMAILS_FROM_EMAIL")
+    SMTP_HOST: str = os.getenv("SMTP_HOST")
+    SMTP_PORT: str = os.getenv("SMTP_PORT")
+    SMTP_TLS: bool = os.getenv("SMTP_TLS")
+    SMTP_USER: str = os.getenv("SMTP_USER")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD")
+
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = os.getenv("EMAIL_RESET_TOKEN_EXPIRE_HOURS")
+    EMAIL_TEMPLATES_DIR: ClassVar[str] = "src/templates/email"
 
     class Config:
         case_sensitive = True

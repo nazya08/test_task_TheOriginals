@@ -4,10 +4,11 @@ from fastapi import HTTPException, Depends
 from starlette import status
 
 from src.adapters.repositories.card.card import CardRepository
-from src.adapters.schemas.card import CardCreate
+from src.adapters.schemas.card import CardCreate, CardUpdate
 from src.adapters.sqlalchemy.models import Card, User, Board
 from src.adapters.sqlalchemy.models.user import UserType
 from src.application.board.board_service import BoardService
+from src.main.utils import send_status_change_email, mock_send_status_change_email
 
 
 class CardService:
@@ -18,7 +19,7 @@ class CardService:
     def get_cards_by_list(self, list_id: int) -> List[Card]:
         return self.card_repo.get_cards(list_id=list_id)
 
-    def get_card(self, list_id: int, card_id: int) -> Card:
+    def _get_card(self, list_id: int, card_id: int) -> Card:
         return self.card_repo.get_card(list_id=list_id, card_id=card_id)
 
     def create_card(self, board: Board, list_id: int, obj_in: CardCreate, current_user: User) -> Card:
@@ -62,7 +63,7 @@ class CardService:
 
         return card_db_obj
 
-    def update_card(self, board: Board, list_id: int, card_id: int, obj_in: CardCreate, current_user: User) -> Card:
+    def update_card(self, board: Board, list_id: int, card_id: int, obj_in: CardUpdate, current_user: User) -> Card:
         if board.owner_id != current_user.id and current_user.type != UserType.admin:
             if not self.board_service.is_user_member_of_board(board, current_user):
                 raise HTTPException(
@@ -70,9 +71,36 @@ class CardService:
                     detail="You do not have permission to update a card in this board"
                 )
 
+        card = self._get_card(list_id=list_id, card_id=card_id)
+        if not card:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Card not found")
+
+        old_status = card.list_id
+        new_status = obj_in.list_id
+
         card_data = obj_in.dict(exclude_unset=True)
 
         updated_card = self.card_repo.update_card(list_id=list_id, card_id=card_id, card_data=card_data)
+
+        if old_status != new_status:
+            responsible_user = card.responsible
+
+            # if responsible_user:
+            #     send_status_change_email.delay(
+            #         email_to=responsible_user.email,
+            #         task_title=card.title,
+            #         old_status=old_status,
+            #         new_status=new_status,
+            #         due_date=card.due_date
+            #     )
+            if responsible_user:
+                mock_send_status_change_email(
+                    email_to=responsible_user.email,
+                    task_title=card.title,
+                    old_status=old_status,
+                    new_status=new_status,
+                    due_date=str(card.due_date)
+                )
 
         return updated_card
 

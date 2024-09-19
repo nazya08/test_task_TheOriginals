@@ -20,6 +20,21 @@ services:
     ports:
       - "5434:5433"
 
+  redis:
+      image: redis:alpine
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis-data:/data
+
+  celery:
+      build: .
+      command: celery -A src.main.celery worker --loglevel=info
+      depends_on:
+        - web
+        - redis
+
 volumes:
   postgres_data:
     driver: local
+  redis-data:

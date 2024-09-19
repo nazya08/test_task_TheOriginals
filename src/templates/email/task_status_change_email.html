@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Status Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dddddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            font-size: 16px;
+        }
+        .task-info {
+            margin: 20px 0;
+        }
+        .task-info strong {
+            color: #333;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>{{ project_name }} - Task Status Update</h2>
+        </div>
+        <div class="content">
+            <p>Hi there,</p>
+            <p>The status of the task "<strong>{{ task_title }}</strong>" has been updated.</p>
+
+            <div class="task-info">
+                <p><strong>Previous Status:</strong> {{ old_status }}</p>
+                <p><strong>New Status:</strong> {{ new_status }}</p>
+                <p><strong>Due Date:</strong> {{ due_date }}</p>
+            </div>
+
+            <p>If you have any questions, feel free to reach out.</p>
+            <p>Best regards,</p>
+            <p>{{ project_name }} Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply directly to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

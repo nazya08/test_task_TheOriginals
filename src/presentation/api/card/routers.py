@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from starlette.status import HTTP_204_NO_CONTENT
 
 from src.adapters.schemas.card import CardUpdate, CardResponse, CardCreate, CardExternalResponse
-from src.adapters.schemas.user import UserResponse
+from src.adapters.schemas.user import UserResponse, UserShortResponse
 from src.adapters.sqlalchemy.models import Board, User, List, Card
 from src.application.card.card_service import CardService
 from src.presentation.dependencies.board import get_board
@@ -52,7 +52,16 @@ def read_card_by_id(
             created_at=card.created_at,
             updated_at=card.updated_at
         ),
-        performers=[UserResponse.from_orm(performer) for performer in card.performers],
+        performers=[
+            UserShortResponse(
+                id=performer.id,
+                username=performer.username,
+                email=performer.email,
+                type=performer.type,
+                is_active=performer.is_active
+            ) for performer in card.performers
+        ],
+        performers_count=len(card.performers),
         comments_count=len(card.comments),
         attachments_count=len(card.attachments),
         checklists_count=len(card.check_lists),
